@@ -27,11 +27,11 @@ logEnvVars.log(process.env); // eslint-disable-line no-process-env
 const { jobConcurrency, clockJobConfig } = conf;
 const jobProcessor = require('./jobProcessor');
 const requireDir = require('require-dir');
-const jobs = requireDir('./jobs');
+const jobs = requireDir('./job');
 const clockJobs = requireDir('../clock/scheduledJobs');
 
 jobProcessor.processJobs(jobs, jobConcurrency);
-jobProcessor.processClockJobs(clockJobs, clockJobConfig);
+// jobProcessor.processClockJobs(clockJobs, clockJobConfig);
 
 if (featureToggles.isFeatureEnabled('enablePubsubStatsLogs')) {
   const logPubSubStats = require('../realtime/pubSubStats').log;

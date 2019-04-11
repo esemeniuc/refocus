@@ -16,6 +16,7 @@
 'use strict'; // eslint-disable-line strict
 const jobSetup = require('./setup');
 const jobQueue = jobSetup.jobQueue;
+const bulkUpsertQueue = jobSetup.bulkUpsertQueue;
 const jwtUtil = require('../utils/jwtUtil');
 const featureToggles = require('feature-toggles');
 const activityLogUtil = require('../utils/activityLog');
@@ -64,6 +65,29 @@ function mapJobResultsToLogObject(jobResultObj, logObject) {
     logObject.errorCount = jobResultObj.errorCount;
   }
 }
+
+bulkUpsertQueue.on('completed', (job, jobResultObj) => {
+  const logObject = {};
+  console.log("Job complete in Bull Queue...", jobResultObj);
+  // when enableWorkerActivityLogs are enabled, update the logObject
+  if (featureToggles.isFeatureEnabled('enableWorkerActivityLogs') &&
+    jobResultObj && {}) {
+    mapJobResultsToLogObject(jobResultObj, logObject);
+
+    // Update queueStatsActivityLogs
+    if (featureToggles
+      .isFeatureEnabled('enableQueueStatsActivityLogs')) {
+      queueTimeActivityLogs
+        .update(jobResultObj.recordCount, jobResultObj.queueTime);
+    }
+
+    /*
+     * The second argument should match the activity logging type in
+     * /config/activityLog.js
+     */
+    activityLogUtil.printActivityLogString(logObject, 'worker');
+  }
+});
 
 /**
  * Listen for a job completion event. If activity logs are enabled,
@@ -179,11 +203,20 @@ function createPromisifiedJob(jobName, data, req) {
   const startTime = Date.now();
   const jobPriority = calculateJobPriority(conf.prioritizeJobsFrom,
     conf.deprioritizeJobsFrom, req);
+
+  if (featureToggles.isFeatureEnabled('enableBull')) {
+    return new Promise((resolve, reject) => {
+      console.log("Adding job in Bull Queue.....");
+      const job = bulkUpsertQueue.add(data);
+      return resolve(job);
+    });
+  }
+
   return new Promise((resolve, reject) => {
     const job = jobQueue.create(jobName, data);
-    job.ttl(TIME_TO_LIVE)
-    .priority(jobPriority)
-    .save((err) => {
+    // job.ttl(TIME_TO_LIVE)
+    // .priority(jobPriority)
+    job.save((err) => {
       if (err) {
         const msg =
           `Error adding ${jobName} job (id ${job.id}) to the worker queue`;
@@ -236,4 +269,5 @@ module.exports = {
   jobQueue,
   logJobOnComplete,
   mapJobResultsToLogObject,
+  bulkUpsertQueue,
 }; // exports

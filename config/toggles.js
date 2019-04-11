@@ -201,6 +201,9 @@ const shortTermToggles = {
   // adds isBot to token and returns token on patches not just posts
   addIsBotToToken: environmentVariableTrue(
     pe, 'ADD_ISBOT_TO_TOKEN'),
+
+  enableBull: environmentVariableTrue(
+    pe, 'ENABLE_BULL'),
 }; // shortTermToggles
 
 featureToggles.load(Object.assign({}, longTermToggles, shortTermToggles));

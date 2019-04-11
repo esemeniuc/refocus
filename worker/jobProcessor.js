@@ -10,14 +10,21 @@
  * /worker/jobProcessor.js
  */
 'use strict'; // eslint-disable-line strict
-const { jobQueue } = require('../jobQueue/jobWrapper');
+const { jobQueue, bulkUpsertQueue } = require('../jobQueue/jobWrapper');
 const executeClockJob = require('./jobs/executeClockJob');
+const featureToggles = require('feature-toggles');
+const path = require('path');
 
 module.exports = {
   processJobs(jobs, jobConcurrency) {
     Object.entries(jobs).forEach(([jobName, job]) => {
       const concurrency = jobConcurrency[jobName];
-      jobQueue.process(jobName, concurrency, job);
+      const concurrency = 1;
+      if (featureToggles.isFeatureEnabled('enableBull')) {
+        bulkUpsertQueue.process(job);
+      } else {
+        jobQueue.process(jobName, concurrency, job);
+      }
     });
   },
 

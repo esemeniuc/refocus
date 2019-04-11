@@ -33,6 +33,7 @@ const COUNT_HEADER_NAME = require('../constants').COUNT_HEADER_NAME;
 const logger = require('winston');
 const generators = require('../helpers/nouns/generators');
 
+
 /**
  * Find sample (from redis sample store). If cache is on then cache the
  * response as well.
@@ -415,24 +416,32 @@ module.exports = {
      * with status and body
      */
     function bulkUpsert(user) {
+      const wrappedBulkUpsertData = {};
+      wrappedBulkUpsertData.upsertData = value;
+      wrappedBulkUpsertData.user = user;
+      wrappedBulkUpsertData.reqStartTime = resultObj.reqStartTime;
+      wrappedBulkUpsertData.readOnlyFields = readOnlyFields;
+
       if (featureToggles.isFeatureEnabled('enableWorkerProcess')) {
+        if (featureToggles.isFeatureEnabled('enableBull')) {
+          wrappedBulkUpsertData.qType = '####### BULL #########';
+        } else {
+          wrappedBulkUpsertData.qType = '######## KUE ##########';
+        }
+
         const jobType = require('../../../jobQueue/setup').jobType;
         const jobWrapper = require('../../../jobQueue/jobWrapper');
-        const wrappedBulkUpsertData = {};
-        wrappedBulkUpsertData.upsertData = value;
-        wrappedBulkUpsertData.user = user;
-        wrappedBulkUpsertData.reqStartTime = resultObj.reqStartTime;
-        wrappedBulkUpsertData.readOnlyFields = readOnlyFields;
         const jobPromise = jobWrapper
           .createPromisifiedJob(jobType.bulkUpsertSamples,
             wrappedBulkUpsertData, req);
+
         return jobPromise.then((job) => {
           // set the job id in the response object before it is returned
-          body.jobId = job.id;
+          body.jobId = parseInt(job.id, 10);
           u.logAPI(req, resultObj, body, value.length);
           return res.status(httpStatus.OK).json(body);
         })
-        .catch((err) => u.handleError(next, err, helper.modelName));
+          .catch((err) => u.handleError(next, err, helper.modelName));
       }
 
       /*

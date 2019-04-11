@@ -20,6 +20,7 @@ const urlParser = require('url');
 const kue = require('kue');
 const Promise = require('bluebird');
 const activityLogUtil = require('../utils/activityLog');
+const BullQueue = require('bull');
 
 const redisOptions = {
   redis: conf.redis.instanceUrl.queue,
@@ -31,6 +32,7 @@ if (redisInfo.protocol !== PROTOCOL_PREFIX) {
 }
 
 const jobQueue = kue.createQueue(redisOptions);
+const bulkUpsertQueue = new BullQueue('sample upserts', redisOptions.redis);
 
 function resetJobQueue() {
   return Promise.map(jobQueue.workers, (w) =>
@@ -76,4 +78,5 @@ module.exports = {
   ttlForJobsSync: conf.JOB_QUEUE_TTL_SECONDS_SYNC,
   delayToRemoveJobs: conf.JOB_REMOVAL_DELAY_SECONDS,
   kue,
+  bulkUpsertQueue,
 }; // exports
