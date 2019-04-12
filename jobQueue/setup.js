@@ -26,15 +26,18 @@ const redisOptions = {
   redis: conf.redis.instanceUrl.queue,
 };
 
+let redisUrl = redisOptions.redis;
+
 const redisInfo = urlParser.parse(redisOptions.redis, true);
 if (redisInfo.protocol !== PROTOCOL_PREFIX) {
   redisOptions.redis = 'redis:' + redisOptions.redis;
+  redisUrl = 'redis:' + redisUrl;
 }
 
 const jobQueue = kue.createQueue(redisOptions);
 
-console.log('bulkUpsertQueue initialized with redis ####', redisOptions.redis);
-const bulkUpsertQueue = new BullQueue('sample upserts', redisOptions.redis);
+console.log('bulkUpsertQueue initialized with redis', redisUrl);
+const bulkUpsertQueue = new BullQueue('sample upserts', redisUrl);
 
 function resetJobQueue() {
   return Promise.map(jobQueue.workers, (w) =>
