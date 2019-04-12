@@ -67,11 +67,14 @@ function mapJobResultsToLogObject(jobResultObj, logObject) {
 }
 
 bulkUpsertQueue.on('completed', (job, jobResultObj) => {
-  const logObject = {};
+  const logObject = {
+    jobType: 'bulkUpsertSamples',
+    jobId: job.id,
+  };
   console.log("Job complete in Bull Queue...");
   // when enableWorkerActivityLogs are enabled, update the logObject
   if (featureToggles.isFeatureEnabled('enableWorkerActivityLogs') &&
-    jobResultObj && {}) {
+    jobResultObj && logObject) {
     mapJobResultsToLogObject(jobResultObj, logObject);
 
     // Update queueStatsActivityLogs
