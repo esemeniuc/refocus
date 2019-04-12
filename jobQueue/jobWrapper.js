@@ -68,7 +68,7 @@ function mapJobResultsToLogObject(jobResultObj, logObject) {
 
 bulkUpsertQueue.on('completed', (job, jobResultObj) => {
   const logObject = {};
-  console.log("Job complete in Bull Queue...", jobResultObj);
+  console.log("Job complete in Bull Queue...");
   // when enableWorkerActivityLogs are enabled, update the logObject
   if (featureToggles.isFeatureEnabled('enableWorkerActivityLogs') &&
     jobResultObj && {}) {
@@ -208,6 +208,7 @@ function createPromisifiedJob(jobName, data, req) {
     return new Promise((resolve, reject) => {
       console.log("Adding job in Bull Queue.....");
       const job = bulkUpsertQueue.add(data);
+      console.log("Job added >>>");
       return resolve(job);
     });
   }
