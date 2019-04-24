@@ -204,6 +204,8 @@ const shortTermToggles = {
 
   enableBull: environmentVariableTrue(
     pe, 'ENABLE_BULL'),
+
+  useKafkaForJobQ: environmentVariableTrue(pe, 'USE_KAFKA_FOR_JOBQ'),
 }; // shortTermToggles
 
 featureToggles.load(Object.assign({}, longTermToggles, shortTermToggles));

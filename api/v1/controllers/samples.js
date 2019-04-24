@@ -32,6 +32,7 @@ const RADIX = 10;
 const COUNT_HEADER_NAME = require('../constants').COUNT_HEADER_NAME;
 const logger = require('winston');
 const generators = require('../helpers/nouns/generators');
+const kafkaProducer = require('../../../jobQueue/kafka/kafkaProducer');
 
 
 /**
@@ -423,25 +424,30 @@ module.exports = {
       wrappedBulkUpsertData.readOnlyFields = readOnlyFields;
 
       if (featureToggles.isFeatureEnabled('enableWorkerProcess')) {
-        if (featureToggles.isFeatureEnabled('enableBull')) {
-          wrappedBulkUpsertData.qType = '####### BULL #########';
+        if (featureToggles.isFeatureEnabled('useKafkaForJobQ')) {
+          wrappedBulkUpsertData.qType = '####### KAFKA #########';
+          kafkaProducer.send('bulkUpsert', wrappedBulkUpsertData);
         } else {
-          wrappedBulkUpsertData.qType = '######## KUE ##########';
+          if (featureToggles.isFeatureEnabled('enableBull')) {
+            wrappedBulkUpsertData.qType = '####### BULL #########';
+          } else {
+            wrappedBulkUpsertData.qType = '######## KUE ##########';
+          }
+
+          const jobType = require('../../../jobQueue/setup').jobType;
+          const jobWrapper = require('../../../jobQueue/jobWrapper');
+          const jobPromise = jobWrapper
+            .createPromisifiedJob(jobType.bulkUpsertSamples,
+              wrappedBulkUpsertData, req);
+
+          return jobPromise.then((job) => {
+            // set the job id in the response object before it is returned
+            body.jobId = parseInt(job.id, 10);
+            u.logAPI(req, resultObj, body, value.length);
+            return res.status(httpStatus.OK).json(body);
+          })
+            .catch((err) => u.handleError(next, err, helper.modelName));
         }
-
-        const jobType = require('../../../jobQueue/setup').jobType;
-        const jobWrapper = require('../../../jobQueue/jobWrapper');
-        const jobPromise = jobWrapper
-          .createPromisifiedJob(jobType.bulkUpsertSamples,
-            wrappedBulkUpsertData, req);
-
-        return jobPromise.then((job) => {
-          // set the job id in the response object before it is returned
-          body.jobId = parseInt(job.id, 10);
-          u.logAPI(req, resultObj, body, value.length);
-          return res.status(httpStatus.OK).json(body);
-        })
-          .catch((err) => u.handleError(next, err, helper.modelName));
       }
 
       /*
