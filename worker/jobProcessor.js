@@ -20,7 +20,7 @@ module.exports = {
     Object.entries(jobs).forEach(([jobName, job]) => {
       const concurrency = jobConcurrency[jobName];
       if (featureToggles.isFeatureEnabled('enableBull')) {
-        bulkUpsertQueue.process(concurrency, job);
+        bulkUpsertQueue.process(Number(concurrency), job);
       } else {
         jobQueue.process(jobName, concurrency, job);
       }
