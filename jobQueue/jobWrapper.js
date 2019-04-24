@@ -71,7 +71,7 @@ bulkUpsertQueue.on('completed', (job, jobResultObj) => {
     jobType: 'bulkUpsertSamples',
     jobId: job.id,
   };
-  console.log("Job complete in Bull Queue...");
+
   // when enableWorkerActivityLogs are enabled, update the logObject
   if (featureToggles.isFeatureEnabled('enableWorkerActivityLogs') &&
     jobResultObj && logObject) {
@@ -209,9 +209,7 @@ function createPromisifiedJob(jobName, data, req) {
 
   if (featureToggles.isFeatureEnabled('enableBull')) {
     return new Promise((resolve, reject) => {
-      console.log("Adding job in Bull Queue.....");
       const job = bulkUpsertQueue.add(data);
-      console.log("Job added >>>");
       return resolve(job);
     });
   }

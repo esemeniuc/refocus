@@ -36,7 +36,6 @@ if (redisInfo.protocol !== PROTOCOL_PREFIX) {
 
 const jobQueue = kue.createQueue(redisOptions);
 
-console.log('bulkUpsertQueue initialized with redis', redisUrl);
 const bulkUpsertQueue = new BullQueue('sample upserts', redisUrl);
 
 function resetJobQueue() {
