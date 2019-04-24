@@ -18,10 +18,9 @@ const path = require('path');
 module.exports = {
   processJobs(jobs, jobConcurrency) {
     Object.entries(jobs).forEach(([jobName, job]) => {
-      // const concurrency = jobConcurrency[jobName];
-      const concurrency = 1;
+      const concurrency = jobConcurrency[jobName];
       if (featureToggles.isFeatureEnabled('enableBull')) {
-        bulkUpsertQueue.process(job);
+        bulkUpsertQueue.process(concurrency, job);
       } else {
         jobQueue.process(jobName, concurrency, job);
       }
