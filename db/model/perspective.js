@@ -113,7 +113,7 @@ module.exports = function perspective(seq, dataTypes) {
       /*
        * TODO: socketio namespace object is garbage collected when there are
        * no references to it. We still have to check, if deleting the namespace
-       * object manually in the afterDelete hook will help.
+       * object manually in the afterDestroy hook will help.
        */
     },
     indexes: [

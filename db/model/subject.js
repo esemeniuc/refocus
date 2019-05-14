@@ -322,7 +322,7 @@ module.exports = function subject(seq, dataTypes) {
        * @returns {Promise} which resolves to the deleted Subject or rejects
        *  if an error was encountered
        */
-      afterDelete(inst /* , opts */) {
+      afterDestroy(inst /* , opts */) {
         return new seq.Promise((resolve, reject) =>
           inst.getParent()
             .then((par) => {
@@ -344,7 +344,7 @@ module.exports = function subject(seq, dataTypes) {
             .then(() => resolve(inst))
             .catch((err) => reject(err))
         );
-      }, // hooks.afterDelete
+      }, // hooks.afterDestroy
 
       /**
        * Prevents from deleting a subject which has children.
@@ -693,7 +693,7 @@ module.exports = function subject(seq, dataTypes) {
         value = this.getDataValue('parentAbsolutePath');
       }
 
-      return Subject.scope({ method: [key, value] }).find()
+      return Subject.scope({ method: [key, value] }).findOne()
         .then((parent) => {
           if (parent) {
             if (parent.getDataValue('isPublished') === false &&

@@ -467,7 +467,7 @@ function findByIdThenName(model, key, opts, props) {
   return new Promise((resolve, reject) => {
     const wh = opts.where;
     delete opts.where;
-    model.findById(key, opts)
+    model.findByPk(key, opts)
     .then((found) => found)
     .catch((err) => {
 

@@ -185,7 +185,7 @@ describe('tests/utils/cryptUtils.js >', () => {
         },
       };
 
-      GlobalConfig.find({
+      GlobalConfig.findOne({
         where: {
           key: dbConstants.SGEncryptionAlgorithm,
           value: algorithm,

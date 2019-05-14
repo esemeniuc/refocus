@@ -387,7 +387,7 @@ function attachAspectSubject(sample, subjectModel, aspectModel) {
   let subFinder;
   if (!sample.subject && subjectModel) {
     if (sample.subjectId) {
-      subFinder = subjectModel.unscoped().findById(sample.subjectId, {
+      subFinder = subjectModel.unscoped().findByPk(sample.subjectId, {
         attributes: subjectAttributesToAttach,
       });
     } else {
@@ -404,7 +404,7 @@ function attachAspectSubject(sample, subjectModel, aspectModel) {
   let aspFinder;
   if (!sample.aspect && aspectModel) {
     if (sample.aspectId) {
-      aspFinder = aspectModel.findById(sample.aspectId);
+      aspFinder = aspectModel.findByPk(sample.aspectId);
     } else {
       aspFinder = aspectModel.findOne({
         where: {

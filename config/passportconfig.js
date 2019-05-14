@@ -83,7 +83,7 @@ module.exports = (passportModule) => {
         password: userPassword,
       })
     )
-    .then((userCreated) => User.findById(userCreated.id))
+    .then((userCreated) => User.findByPk(userCreated.id))
     .then((foundUser) => done(null, foundUser))
     .catch((err) => done(err));
   }
