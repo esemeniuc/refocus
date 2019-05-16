@@ -106,7 +106,7 @@ describe('tests/db/model/collector/find.js >', () => {
   });
 
   it('Collector Instance with related generators', (done) => {
-    collectorInst1.reload()
+    Collector.findByPk(collectorInst1.id)
     .then((coll) => coll.collectorGroup.getGenerators())
     .then((generators) => {
       expect(generators).to.have.lengthOf(2);
