@@ -149,7 +149,7 @@ module.exports = {
       const user = req.user;
       seqObj.installedBy = user.id;
       u.setOwner(seqObj, req)
-        .then(() => helper.model.create(seqObj))
+        .then(() => helper.model.create(seqObj, helper.model.options.defaultScope))
         .then((o) => o.reload())
         .then((o) => {
           o.dataValues.ui = uiObj;
@@ -199,7 +199,7 @@ module.exports = {
       return u.setOwner(seqObj, req, o);
     })
     .then((o) => o.update(seqObj))
-    .then((o) => o.reload())
+    .then((o) => o.reload(o._modelOptions.defaultScope))
     .then((o) => {
       o.dataValues.ui = uiObj;
       o.dataValues.token = jwtUtil.createToken(o.dataValues.name,

@@ -166,7 +166,7 @@ describe('tests/db/model/subject/find.js >', () => {
     });
 
     it('name (string data type) order desc', (done) => {
-      Subject.findAll({ order: [['name', 'DESC']] })
+      Subject.unscoped().findAll({ order: [['name', 'DESC']] })
       .then((found) => {
         expect(found).to.have.length(2);
         expect(found[0]).to.have.property('id').to.equal(id2);
@@ -177,7 +177,7 @@ describe('tests/db/model/subject/find.js >', () => {
     });
 
     it('id (uuid data type) order asc', (done) => {
-      Subject.findAll({ order: ['id'] })
+      Subject.unscoped().findAll({ order: ['id'] })
       .then((found) => {
         const foundId1 = found[0].dataValues.id;
         const foundId2 = found[1].dataValues.id;
@@ -189,7 +189,7 @@ describe('tests/db/model/subject/find.js >', () => {
     });
 
     it('id (uuid data type) order desc', (done) => {
-      Subject.findAll({ order: [['id', 'DESC']] })
+      Subject.unscoped().findAll({ order: [['id', 'DESC']] })
       .then((found) => {
         expect(found).to.have.length(2);
         const foundId1 = found[0].dataValues.id;
@@ -213,7 +213,7 @@ describe('tests/db/model/subject/find.js >', () => {
     });
 
     it('createdAt (date data type) order desc', (done) => {
-      Subject.findAll({ order: [['createdAt', 'DESC']] })
+      Subject.unscoped().findAll({ order: [['createdAt', 'DESC']] })
       .then((found) => {
         const foundId1 = found[0].dataValues.createdAt.getTime();
         const foundId2 = found[1].dataValues.createdAt.getTime();

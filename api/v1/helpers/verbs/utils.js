@@ -58,7 +58,7 @@ function updateInstance(o, puttableFields, toPut) {
     }
   }
 
-  return o.save().then((o) => o.reload());
+  return o.save().then((o) => o.reload(o._modelOptions.defaultScope));
 }
 
 /**
@@ -274,11 +274,11 @@ function multipleAssociations(helperModule, requestedAttributes) {
         // filter all associations with respective fk in the model attributes
 
         const foreignKey = model.associations[association].foreignKey;
-        return model.attributes[foreignKey] !== undefined;
+        return model.rawAttributes[foreignKey] !== undefined;
       })
       .map((association) => {
         const foreignKey = model.associations[association].foreignKey;
-        return model.attributes[foreignKey].fieldName;
+        return model.rawAttributes[foreignKey].fieldName;
       });
 
     if (extraForeignKeys.length > 0) {
@@ -633,7 +633,10 @@ function deleteAJsonArrayElement(jsonArray, elementName) {
 function getScopedModel(props, fields) {
   const scopes = [];
   const toRemove = [];
+  let modelToReturn;
 
+  props.model.options.scopes.baseScope = {};
+  console.log(props.model.options)
   if (fields && Array.isArray(fields) && fields.length) {
     if (props.model.options.scopes.hasOwnProperty(constants.BASE_SCOPE)) {
       scopes.push(constants.BASE_SCOPE);
@@ -652,10 +655,18 @@ function getScopedModel(props, fields) {
 
   if (scopes.length) {
     toRemove.forEach((f) => fields.splice(fields.indexOf(f), 1));
-    return props.model.scope(scopes);
+    // if (order) {
+    //   scopes.forEach((scope) => {
+    //     if (props.model.options.scopes[scope] && props.model.options.scopes[scope])
+    //   })
+    // }
+    modelToReturn = props.model.scope(scopes);
+  } else {
+    // console.log('default props model >>>', props.model.options);
+    modelToReturn = props.model;
   }
 
-  return props.model;
+  return modelToReturn;
 } // getScopedModel
 
 /**

@@ -151,7 +151,7 @@ describe('tests/db/model/generator/methods.js >', () => {
         collectorGroup: cg1.name,
       }))
       .then((updated) => updated.update({ collectorId: collector3.id }))
-      .then(() => generator1.reload())
+      .then(() => generator1.reload(generator1._modelOptions.defaultScope))
       .then((reloaded) => {
         expect(reloaded.currentCollector.name).to.equal(collector3.name);
         expect(reloaded.currentCollector.id).to.equal(collector3.id);
@@ -198,7 +198,7 @@ describe('tests/db/model/generator/methods.js >', () => {
 
     it('collectors not specified (unassigned)', () =>
       generator1.update({ collectorId: collector3.id })
-      .then(() => generator1.reload())
+      .then(() => generator1.reload(generator1._modelOptions.defaultScope))
       .then(() => {
         expect(generator1.currentCollector.name).to.equal(collector3.name);
         expect(generator1.currentCollector.id).to.equal(collector3.id);
@@ -215,7 +215,7 @@ describe('tests/db/model/generator/methods.js >', () => {
           collectorGroup: cg1.name,
         }))
         .then(() => generator1.update({ collectorId: collector3.id }))
-        .then(() => generator1.reload())
+        .then(() => generator1.reload(generator1._modelOptions.defaultScope))
         .then(() => {
           expect(generator1.currentCollector.name).to.equal(collector3.name);
           expect(generator1.currentCollector.id).to.equal(collector3.id);
@@ -234,7 +234,7 @@ describe('tests/db/model/generator/methods.js >', () => {
           collectorGroup: cg1.name,
         }))
         .then(() => generator1.update({ collectorId: collector3.id }))
-        .then(() => generator1.reload())
+        .then(() => generator1.reload(generator1._modelOptions.defaultScope))
         .then(() => {
           expect(generator1.currentCollector.name).to.equal(collector3.name);
           expect(generator1.currentCollector.id).to.equal(collector3.id);
@@ -272,7 +272,7 @@ describe('tests/db/model/generator/methods.js >', () => {
 
       it('collectors not specified (unassigned)', () =>
         generator1.update({ collectorId: collector3.id })
-        .then(() => generator1.reload())
+        .then(() => generator1.reload(generator1._modelOptions.defaultScope))
         .then(() => {
           expect(generator1.currentCollector.name).to.equal(collector3.name);
           expect(generator1.currentCollector.id).to.equal(collector3.id);
@@ -482,7 +482,7 @@ describe('tests/db/model/generator/methods.js >', () => {
         coll4 is Stopped. */
         return collector2.update({ status: collectorStatuses.Stopped });
       })
-      .then(() => generator2.reload())
+      .then(() => generator2.reload(generator2._modelOptions.defaultScope))
       .then(() => {
         expect(generator1.currentCollector.name).to.equal(collector1.name);
         expect(generator3.currentCollector.name).to.equal(collector3.name);
@@ -553,7 +553,7 @@ describe('tests/db/model/generator/methods.js >', () => {
         expect(generator1.currentCollector.name).to.equal(collector1.name);
       })
       .then(() => collector1.update({ status: collectorStatuses.Stopped }))
-      .then(() => generator1.reload())
+      .then(() => generator1.reload(generator1._modelOptions.defaultScope))
       .then(() => {
         expect(generator1.currentCollector).to.equal(null);
       })

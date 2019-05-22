@@ -229,7 +229,7 @@ module.exports = {
       return instance.setCollectorGroup(_collGroup);
     })
     .then(() => u.updateInstance(instance, puttableFields, toPut))
-    .then(() => instance.reload())
+    .then(() => instance.reload(helper.model.options.defaultScope))
     .then((retVal) =>
       u.handleUpdatePromise(resultObj, req, retVal, helper, res)
     )

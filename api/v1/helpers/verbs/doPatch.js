@@ -73,7 +73,7 @@ function doPatch(req, res, next, props) {
     u.patchJsonArrayFields(o, requestBody, props);
     u.patchArrayFields(o, requestBody, props);
 
-    return o.update(requestBody).then((o) => o.reload());
+    return o.update(requestBody).then((o) => o.reload(o._modelOptions.defaultScope));
   })
 
   .then((retVal) => u.handleUpdatePromise(resultObj, req, retVal, props, res))

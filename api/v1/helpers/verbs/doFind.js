@@ -32,8 +32,11 @@ const redisCache = require('../../../../cache/redisCache').client.cache;
  *  find command
  */
 function doFindAndCountAll(reqResNext, props, opts, resultObj) {
-  return u.getScopedModel(props, opts.attributes)
-    .findAndCountAll(opts)
+  // console.log('opts >>>>', opts);
+  const retModel = u.getScopedModel(props, opts.attributes);
+  // console.log(retModel.);
+
+  return retModel.findAndCountAll(opts)
     .then((o) => {
       resultObj.dbTime = new Date() - resultObj.reqStartTime;
       reqResNext.res.set(COUNT_HEADER_NAME, o.count);

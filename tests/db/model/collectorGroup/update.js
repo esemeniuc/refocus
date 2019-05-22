@@ -164,7 +164,7 @@ describe('tests/db/model/collectorGroup/update.js >', () => {
         expect(err).to.have.property('name', 'ValidationError');
         expect(err).to.have.property('message',
           'This collector group does not contain [coll-3]');
-        collectorGroupDb.reload()
+        collectorGroupDb.reload(collectorGroupDb._modelOptions.defaultScope)
           .then((cg) => {
             expect(cg.get().collectors).to.have.lengthOf(2);
             done();

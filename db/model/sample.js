@@ -387,7 +387,7 @@ module.exports = function sample(seq, dataTypes) {
       })
       .then((o) => {
         if (featureToggles.isFeatureEnabled('returnUser')) {
-          return o.reload().then((o) => resolve(o));
+          return o.reload(Sample.options.defaultScope).then((o) => resolve(o));
         }
 
         return resolve(o);
