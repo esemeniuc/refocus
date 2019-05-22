@@ -630,13 +630,12 @@ function deleteAJsonArrayElement(jsonArray, elementName) {
  * @returns {Model} the appropriately-scoped model for the given DB model and
  *  the list of fields requested.
  */
-function getScopedModel(props, fields) {
+function getScopedModel(props, fields, order) {
   const scopes = [];
   const toRemove = [];
   let modelToReturn;
 
   props.model.options.scopes.baseScope = {};
-  console.log(props.model.options)
   if (fields && Array.isArray(fields) && fields.length) {
     if (props.model.options.scopes.hasOwnProperty(constants.BASE_SCOPE)) {
       scopes.push(constants.BASE_SCOPE);
@@ -655,16 +654,27 @@ function getScopedModel(props, fields) {
 
   if (scopes.length) {
     toRemove.forEach((f) => fields.splice(fields.indexOf(f), 1));
-    // if (order) {
-    //   scopes.forEach((scope) => {
-    //     if (props.model.options.scopes[scope] && props.model.options.scopes[scope])
-    //   })
-    // }
+
+    // delete props.model.options.defaultScope.xyz;
     modelToReturn = props.model.scope(scopes);
+    // console.log('getScopedModel', props.model.options.defaultScope);
   } else {
     // console.log('default props model >>>', props.model.options);
     modelToReturn = props.model;
   }
+
+  // if (order) {
+  //   const modelCopy = JSON.parse(JSON.stringify(props.model));
+  //   scopes.forEach((scope) => {
+  //     if (props.model.options.scopes[scope]) {
+  //       delete props.model.options.scopes[scope].order;
+  //     }
+  //
+  //     if (props.model.options[scope]) {
+  //       delete props.model.options[scope].order;
+  //     }
+  //   });
+  // }
 
   return modelToReturn;
 } // getScopedModel

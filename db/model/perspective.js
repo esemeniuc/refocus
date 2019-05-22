@@ -173,7 +173,7 @@ module.exports = function perspective(seq, dataTypes) {
     });
 
     Perspective.addScope('baseScope', {
-      order: ['name'],
+      order: seq.col('name'),
     });
 
     Perspective.addScope('defaultScope', {
@@ -198,7 +198,7 @@ module.exports = function perspective(seq, dataTypes) {
           ],
         },
       ],
-      order: ['name'],
+      order: seq.col('name'),
     }, {
       override: true,
     });

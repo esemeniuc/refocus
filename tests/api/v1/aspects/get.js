@@ -481,7 +481,7 @@ describe('tests/api/v1/aspects/get.js >', () => {
   }); // Lists
 
   describe('Aspect Sorting by rank >', () => {
-    it.only('sort ascending', (done) => {
+    it('sort ascending', (done) => {
       api.get(`${path}?sort=rank`)
       .set('Authorization', token)
       .expect(constants.httpStatus.OK)
