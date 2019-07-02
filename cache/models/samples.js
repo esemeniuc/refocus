@@ -727,17 +727,23 @@ function assembleSampleAspects(samplesAndAspects) {
  */
 function sscanAndFilterSampleKeys(cursor, filteredSamples, opts) {
   debugfindSamples('entered sscanAndFilterSampleKeys - cursor: %s, ' +
-    'filteredSamples length: %d', cursor, filteredSamples.length);
+    'filteredSamples length: %d', cursor, filteredSamples.size);
   return redisClient.sscanAsync(constants.indexKey.sample, cursor)
     .then((reply) => {
       const newCursor = reply[0];
+      debugfindSamples('sscanAndFilterSampleKeys - previous cursor: %s, ' +
+        'new cursor: %s', cursor, newCursor);
       const sampleKeys = reply[1];
 
       let keys = sampleKeys;
       if (opts.filter && opts.filter.name) {
         keys = modelUtils.filterSampleKeysByName(sampleKeys, opts);
+        debugfindSamples('sscanAndFilterSampleKeys - keys filtered by name ' +
+          'number of keys now: %d', keys.length);
       }
 
+      debugfindSamples('sscanAndFilterSampleKeys - number of keys returned ' +
+        'from sscan: %d', keys.length);
       keys.forEach((key) => {
         filteredSamples.add(key);
       });
